@@ -26,6 +26,18 @@
  */
 
 /**
+ * Example usage for Bootstrap Library: *** Component: Button
+ * form_input([
+		'id' => 'input-id',
+		'name' => 'name1',
+		'placeholder' => 'Go to Google',
+		'href' => 'https://www.google.com',
+		'extension' => 'target="blank"'
+	], 'a')
+ * @return <a $extension>$slot</a> Object.
+ */
+
+/**
  * Example usage for Vuetify Library: *** Component: Text Field
  * form_input([
 		'name' => 'name',
@@ -44,7 +56,6 @@
 	], 'v-btn')
  * @return <v-btn ...></v-btn> Object
  */
-
 
 /**
  * Example usage for Vuetify Library: *** Component: Button with $slot
@@ -113,21 +124,10 @@ function form_input($fields, $type_of_input = "", $slot = ""){
   			'value' => ''
   		]
 	*/
-
+  	
   	// We need to make a comparision with $fields variable's $key
   	// And $must_be_keys variable's $value.
-	$must_be_keys = [
-		'id',
-		'name',
-		'class',
-		'placeholder',
-		'label',
-		'value',
-		'type',
-		'@click',
-	];
-
-	
+	$must_be_keys = FORM_KEYS;
 
 	$vals = "";
 	empty($type_of_input) 
@@ -141,7 +141,9 @@ function form_input($fields, $type_of_input = "", $slot = ""){
 		endforeach;
 	endforeach;
 	// Concatenate values to $extension
-	$vals .= "{$fields['extension']}";
+	empty($fields['extension'])
+	? $vals
+	: $vals .= "{$fields['extension']}";
 
 	// dizide 'placeholder' a ait değeri bul.
 
@@ -168,4 +170,27 @@ function form_input($fields, $type_of_input = "", $slot = ""){
 					{$slot}
 				</{$type_of_input}>";
 	}
+}
+
+
+/**
+ * Example usage: form_open("profile/testMethod", "GET");
+ * Example usage with $options = "": form_open("profile/testMethod", "GET", "class='form-control'")
+ * 
+ * You can even add $options="enctype='multipart/form-data'" "
+ * @param $action = "GET|POST|PUT|PATCH"
+ * @param $method = "controller/method"
+ * @param $options = "class='form-control'"
+ */
+function form_open($action, $method, $options = "")
+{
+	$url = "/" . SERVER_NAME . BASE_PATH . $action;
+
+	return "<form method='{$method}' action='/{$url}' {$options} >";
+}
+
+
+function form_close()
+{
+	return "</form>";
 }
