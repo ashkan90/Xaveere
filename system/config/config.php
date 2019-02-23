@@ -22,6 +22,18 @@ define("HELPERS_FOLDER", "../system/helpers/");
 define("CURRENT_PATH", $_SERVER['REQUEST_URI']);
 define("SERVER_NAME", $_SERVER['SERVER_NAME']);
 
+define("FORM_KEYS", [
+	'id',
+	'name',
+	'class',
+	'placeholder',
+	'label',
+	'value',
+	'type',
+	'href',
+	'@click',
+]);
+
 
 define("CONNECTION_TYPE", "mysql");
 define("HOST", "localhost");
