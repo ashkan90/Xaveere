@@ -36,12 +36,18 @@ class Xaveere
 	}
 
 
-	public function helpers($helper)
+	public function helpers($helpers)
 	{
-		if (file_exists(HELPERS_FOLDER . $helper . ".php")) {
-			require_once HELPERS_FOLDER . $helper . ".php";
-		} else {
-			die("{$helper} is not found.");
+		if (!empty($helpers)) {
+			foreach($helpers as $helper):
+				if (file_exists(HELPERS_FOLDER . $helper . ".php")) {
+					require_once HELPERS_FOLDER . $helper . ".php";
+				} else {
+					die("{$helper} is not found.");
+				}
+			endforeach;
 		}
+
+		return false;
 	}
 }
