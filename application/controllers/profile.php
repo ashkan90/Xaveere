@@ -21,15 +21,15 @@ class Profile extends Xaveere
 	{
 		$title = "Xaveere Title";
 		$model = $this->model("users");
-		$this->helpers("url");
-		$this->helpers("form");
+		$this->helpers(["url", "form"]);
 		
 		//$model->fetch_records();
 
-
-		
-		
-
 		$this->view("user");
+	}
+
+	public function testMethod()
+	{
+		return print_r("asşldkasşd");
 	}
 }
