@@ -49,8 +49,7 @@ class Profile extends Xaveere
 
 		$request = new Request;
 		$request->validate([
-			'password' => 'required',
-			'password_confirm' => 'confirm|password|required'
+			'email' => 'required|unique|users'
 		]);
 
 		die();
