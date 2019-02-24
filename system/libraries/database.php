@@ -13,15 +13,18 @@ class Database
 	protected $db;
 	protected $query;
 
+	private $table_name;
+
 	function __construct()
 	{
 		try {
-			$database_connection_string = "mysql:host=" . $this->host . ";dbname=" . $this->database;
+			$database_connection_string = "mysql:host={$this->host};dbname={$this->database}";
 
 			$this->db = new PDO(
 				$database_connection_string, 
 				$this->username, 
 				$this->password);
+			$this->table_name = strtolower(get_called_class());
 		} catch (PDOExeption $e) {
 			die("Database connection error: {$e->getMessage()}");
 		}
@@ -45,8 +48,9 @@ class Database
 	/**
 	 * Count the number of rows from the specified table
 	 */
-	public function allCount($table)
+	public function allCount($table = "")
 	{
+		$table = $this->table_name;
 		$this->query = $this->db->prepare("SELECT * FROM " . $table);
 		$this->query->execute();
 		return $this->query->rowCount();
@@ -94,8 +98,9 @@ class Database
 	 * @param $table_name, $options = [];
 	 * @return $table_name @object
 	 */
-	public function select($table_name, $options = [])
+	public function select($table_name = "", $options = [])
 	{
+		$table_name = $this->table_name;
 		if (empty($options)) {
 			$this->query = $this->db->prepare("SELECT * FROM " . $table_name);
 			return $this->query->execute();
@@ -111,8 +116,9 @@ class Database
 	 * @param $table_name, $options = [];
 	 * @return $table_name object with given parameters as a $options[]
 	 */
-	public function where($table_name, $options = [])
+	public function where($table_name = "", $options = [])
 	{
+		$table_name = $this->table_name;
 		$_columns = "";
 		$_options = "";
 		foreach($options as $key => $value):
@@ -132,8 +138,9 @@ class Database
 		return $this->query->execute($_options);
 	}
 
-	public function delete($table_name, $options = [])
+	public function delete($table_name = "", $options = [])
 	{
+		$table_name = $this->table_name;
 		$_columns = "";
 		$_options = "";
 		foreach($options as $key => $value):
@@ -161,9 +168,9 @@ class Database
 	 * 'update($table_name, ['name' => $new_name, 'address' => $new_address], ['id' => $id]'
 	 * @return boolean
 	 */
-	public function update($table_name, $set_array, $options = [])
+	public function update($table_name = "", $set_array, $options = [])
 	{
-
+		$table_name = $this->table_name;
 		// UPDATE table_name
 		// SET column1=value, column2=value2,...
 		// WHERE some_column=some_value 
@@ -207,8 +214,9 @@ class Database
 	/**
 	 * @return boolean
 	 */
-	public function create($table_name, $columns)
+	public function insert($table_name = "", $columns)
 	{
+		$table_name = $this->table_name;
 		$column_names = "";
 		$placeholder = "";
 		$values = "";
