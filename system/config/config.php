@@ -18,6 +18,8 @@ define("ROOT_CONTROLLER_FOLDER", "../application/controllers/");
 define("ROOT_MODEL_FOLDER", "../application/models/");
 define("ROOT_PUBLIC_FOLDER", "../public/");
 define("HELPERS_FOLDER", "../system/helpers/");
+define("LIBRARIES_FOLDER", "../system/libraries/");
+
 
 define("CURRENT_PATH", $_SERVER['REQUEST_URI']);
 define("SERVER_NAME", $_SERVER['SERVER_NAME']);
