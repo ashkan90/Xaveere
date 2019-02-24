@@ -15,6 +15,7 @@ trait Validation {
 		$this->checkForString($rules, $data);
 		$this->checkForInt($rules, $data);
 		$this->checkForConfirm($rules, $data);
+		$this->checkForEmail($rules, $data);
 		return empty($this->errors) ? true : die(print_r($this->errors));
 	}
 
@@ -86,7 +87,7 @@ trait Validation {
 	 * 'age' must be 'integer' otherwise, it'll give a report.
 	 * @return void
 	 */
-	private function checkForInt($rules, $data) : void
+	private function checkForInt($rules, $data)  : void
 	{
 		$pattern = "/^[0-9]+$/";
 		if ($this->in_array_r("int", $rules)) {
@@ -131,7 +132,7 @@ trait Validation {
 	 * Warning: There is priority so you need to declare 'max' before required or something else.
 	 * @return void
 	 */
-	private function checkForMax($rules, $data) : void
+	private function checkForMax($rules, $data)  : void
 	{
 		if ($this->in_array_r("max", $rules)) {
 			$max_index = array_search("max", $rules);
@@ -180,11 +181,54 @@ trait Validation {
 		
 	}
 
+
+	/**
+	 *  $request = new Request;
+	 *	$request->validate([
+	 *		'email' => 'required|unique|users'
+	 *	]);
+	 * 'unique|users': users = "which 'table' will be checked for this input's value to make them match and their existing."
+	 * @return void
+	 */
+	private function checkForEmail($rules, $data) : void
+	{
+		
+		if ($this->in_array_r("unique", $rules)) {
+			$table = array_map(function($rule){
+				if (in_array("unique", $rule)) {
+					$key = array_search("unique", $rule);
+					$nameTable = $rule[++$key];
+					return ['index' => $key, 'table' => $nameTable];
+				}
+			}, $rules);
+
+			$fieldName = array_key_first($table); // email
+			$fieldData = $_POST[$fieldName] ?? $_GET[$fieldName]; // data of email input.
+			foreach ($data as $key => $field) {
+				// $field = inputName e.g. 'email'
+				if ($field == $fieldName) {
+					require_once LIBRARIES_FOLDER . "database.php";
+					$db = new Database;
+					if ($db->where($table[$fieldName]['table'], [$fieldName => $fieldData])) {
+						if ($db->count() > 0) {
+							$this->errors[] = "{$fieldData} is already exist.";
+						}
+					} else {
+						$this->errors[] = "{$fieldName} is not exist on your {$table[$fieldName]['table']} table.";
+					}
+				} else {
+					$this->errors[] = "Something went wrong.";
+				}
+			}
+			
+		}
+	}
+
 	/**
 	 * Multidimensional in_array method.
 	 * @return boolean
 	 */
-	private function in_array_r($needle, $haystack, $strict = false) : boolean {
+	private function in_array_r($needle, $haystack, $strict = false) {
 	    foreach ($haystack as $item) {
 	        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && $this->in_array_r($needle, $item, $strict))) {
 	            return true;
