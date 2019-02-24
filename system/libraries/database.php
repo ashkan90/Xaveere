@@ -118,7 +118,7 @@ class Database
 	 */
 	public function where($table_name = "", $options = [])
 	{
-		$table_name = $this->table_name;
+		$table_name ?? $this->table_name;
 		$_columns = "";
 		$_options = "";
 		foreach($options as $key => $value):
@@ -140,7 +140,7 @@ class Database
 
 	public function delete($table_name = "", $options = [])
 	{
-		$table_name = $this->table_name;
+		$table_name ?? $this->table_name;
 		$_columns = "";
 		$_options = "";
 		foreach($options as $key => $value):
@@ -170,7 +170,7 @@ class Database
 	 */
 	public function update($table_name = "", $set_array, $options = [])
 	{
-		$table_name = $this->table_name;
+		$table_name ?? $this->table_name;
 		// UPDATE table_name
 		// SET column1=value, column2=value2,...
 		// WHERE some_column=some_value 
@@ -216,7 +216,7 @@ class Database
 	 */
 	public function insert($table_name = "", $columns)
 	{
-		$table_name = $this->table_name;
+		$table_name ?? $this->table_name;
 		$column_names = "";
 		$placeholder = "";
 		$values = "";
