@@ -17,16 +17,9 @@
   	  		<?= form_open("profile/form_submit", "POST") ?>
   	  			<div>
   	  				<?= form_input([
-	  	  				'name' => 'password',
-                'type' => 'password',
-	  	  				'label' => 'Enter your password',
-	  	  			], 'v-text-field') ?>
-  	  			</div>
-  	  			<div>
-  	  				<?= form_input([
-	  	  				'name' => 'password_confirm',
-                'type' => 'password',
-	  	  				'label' => 'Confirm your password',
+	  	  				'name' => 'email',
+                'type' => 'email',
+	  	  				'label' => 'Enter your email',
 	  	  			], 'v-text-field') ?>
   	  			</div>
 	  	  		<?= form_input([
