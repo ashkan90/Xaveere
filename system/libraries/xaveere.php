@@ -6,6 +6,16 @@
 class Xaveere
 {
 
+	public function __construct()
+	{
+		if (file_exists("../system/config/autoload.php")) {
+			require_once "../system/config/autoload.php";
+			$_helpers = $autoload['helpers'];
+			$this->helpers($_helpers);
+		}
+		
+	}
+
 	/**
 	 * Load View for controller
 	 */
