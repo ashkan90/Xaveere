@@ -14,23 +14,23 @@
   	<v-app>
   	  <v-content>
   	  	<v-container fluid>
-  	  		<?= form_open("profile/testMethod", "GET") ?>
+  	  		<?= form_open("profile/form_submit", "POST") ?>
+  	  			<div>
+  	  				<?= form_input([
+	  	  				'name' => 'password',
+                'type' => 'password',
+	  	  				'label' => 'Enter your password',
+	  	  			], 'v-text-field') ?>
+  	  			</div>
+  	  			<div>
+  	  				<?= form_input([
+	  	  				'name' => 'password_confirm',
+                'type' => 'password',
+	  	  				'label' => 'Confirm your password',
+	  	  			], 'v-text-field') ?>
+  	  			</div>
 	  	  		<?= form_input([
-	  	  			'id' => 'input-id',
-	  	  			'name' => 'name1',
-	  	  			'type' => 'file',
-	  	  		]) ?>
-	  	  		<?= form_input([
-	  	  			'id' => 'input-id',
-	  	  			'name' => 'name1',
-	  	  			'placeholder' => 'ANA SQM',
-	  	  			'href' => 'https://www.google.com',
-	  	  			'extension' => 'target="blank"'
-	  	  		], 'a') ?>
-	  	  		<?= form_input([
-	  	  			'id' => 'input-id',
-	  	  			'name' => 'name',
-	  	  			'label' => 'Click me2',
+	  	  			'label' => 'Send data',
 	  	  			'type' => 'submit',
 	  	  			'extension' => 'dark color="black"',
 	  	  		], 'v-btn') ?>
