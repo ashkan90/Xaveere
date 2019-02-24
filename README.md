@@ -1,6 +1,6 @@
 # Xaveere
 
-## First Program With Vuetify
+## First Program Via Vuetify
 index.php(View):
 ```
 <v-list>
