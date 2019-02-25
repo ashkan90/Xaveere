@@ -6,6 +6,7 @@
 class Xaveere
 {
 
+	use Validation;
 	public function __construct()
 	{
 		if (file_exists("../system/config/autoload.php")) {
