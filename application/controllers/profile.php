@@ -1,6 +1,5 @@
 <?php 
 
-include "../system/libraries/request.php"; 
 // will be used 'use' keyword as soon as possible in future.
 /**
  * 
@@ -12,6 +11,7 @@ class Profile extends Xaveere
 	{
 		parent::__construct();
 		$this->store_model = $this->model("users");
+		$this->request = new Request;
 	}
 
 	public function index()
@@ -47,15 +47,12 @@ class Profile extends Xaveere
 		//New style.
 		
 
-		$request = new Request;
-		$request->validate([
-			'email' => 'required|unique|users'
+		
+		$this->request->validate([
+			'email' => 'unique|users|required'
 		]);
 
-		die();
-		if($this->store_model->create($request))
-			redirect("profile/method");
-		else
-			echo "fail";
+		//redirect("profile/method");
+		$this->view("user", $this->request->errors);
 	}
 }
