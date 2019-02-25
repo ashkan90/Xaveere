@@ -14,6 +14,11 @@
   	<v-app>
   	  <v-content>
   	  	<v-container fluid>
+          <?php foreach($this->request->errors['email'] as $errors): ?>
+            <v-alert type="error" dismissible :value="true">
+              <?= ucfirst($errors) ?>
+           </v-alert>
+          <?php endforeach; ?>
   	  		<?= form_open("profile/form_submit", "POST") ?>
   	  			<div>
   	  				<?= form_input([
