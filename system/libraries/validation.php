@@ -222,7 +222,11 @@ trait Validation {
 					if ($db->where($table[$fieldName]['table'], [$fieldName => $fieldData])) {
 						if ($db->count() > 0) {
 							//$this->errors[$fieldName] = "{$fieldData} is already exist.";
-							return array_push($this->errors[$fieldName], "{$fieldData} is already exist.");
+							if (empty($fieldData)) {
+								return false;
+							} else {
+								return array_push($this->errors[$fieldName], "{$fieldData} is already exist.");
+							}
 						}
 					} else {
 						//$this->errors[$fieldName] = "{$fieldName} is not exist on your {$table[$fieldName]['table']} table.";

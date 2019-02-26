@@ -1,19 +1,10 @@
 <?php 
 
 
-/**
- * 
- */
-class Welcome
+class Welcome extends Xaveere
 {
-	
-	/*function __construct()
-	{
-		echo "Welcome.php";
-	}*/
-
 	public function index()
 	{
-		echo "index from welcome";
+		$this->view("app");
 	}
 }

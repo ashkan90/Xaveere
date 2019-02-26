@@ -5,6 +5,10 @@
  */
 class Database
 {
+
+	use Session;
+
+
 	private $host 	  = HOST;
 	private $database = DATABASE;
 	private $username = USERNAME;

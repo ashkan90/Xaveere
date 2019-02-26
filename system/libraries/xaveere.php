@@ -6,13 +6,14 @@
 class Xaveere
 {
 
-	use Validation;
+	use Validation, File, Session;
 	public function __construct()
 	{
-		if (file_exists("../system/config/autoload.php")) {
-			require_once "../system/config/autoload.php";
+		if (file_exists("../application/config/autoload.php")) {
+			require_once "../application/config/autoload.php";
 			$_helpers = $autoload['helpers'];
 			$this->helpers($_helpers);
+			$this->start();
 		}
 		
 	}

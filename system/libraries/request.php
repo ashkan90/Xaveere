@@ -33,4 +33,13 @@ class Request
 			return $url[$segment];
 		}
 	}
+
+
+	/**
+	 * 'value' => old('email');
+	 */
+	public function old($fieldName) : string
+	{
+		return $_POST[$fieldName] ?? $_GET[$fieldName];
+	}
 }
