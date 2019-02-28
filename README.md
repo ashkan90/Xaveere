@@ -95,7 +95,6 @@ $request->validate([
 
 ## Form Helper
 ### Xaveere is supporting Bootstrap, Vuetify and pure, user defined styling.
-<hr>
 ### Text field(Bootstrap)
 ```
 <?php
@@ -135,7 +134,6 @@ form_input([
 ?>
 ```
 
-<hr>
 ### Text field(Vuetify)
 ```
 <?php 
@@ -200,7 +198,6 @@ form_input([
 <?= form_close() ?>
 ```
 
-<hr>
 ## File helper
 ```
 /*
@@ -218,9 +215,6 @@ $this->file($data);
 // Look if there are any errors while uploading a file.
 $this->errors();
 ```
-
-
-
 
 
 ## First Program Via Vuetify
