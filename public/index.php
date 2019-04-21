@@ -1,6 +1,4 @@
-<?php 
+<?php
 
-include "../system/init.php";
-
-
-?>
+include "../vendor/autoload.php";
+include "../server.php";

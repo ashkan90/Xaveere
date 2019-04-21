@@ -1,0 +1,20 @@
+{
+  "authors": [
+    {
+      "name": "Emirhan Ataman",
+      "email": "emirhan.1ataman@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require" : {
+    "php" : "^7.0",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Xaveere\\framework\\": "system/framework",
+      "Xaveere\\Libraries\\" : "system/libraries",
+      "App\\": "application"
+    }
+  }
+}

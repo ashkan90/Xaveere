@@ -1,5 +1,9 @@
 <?php 
-  
+
+
+namespace Xaveere\Libraries;
+
+
 /**
  * @Framework Name: Xaveere
  * @Author Name: Emirhan Ataman
@@ -7,6 +11,8 @@
  * @Version: 1.0.0
  * @Description: Route class
  */
+
+
 class Route
 {
 	

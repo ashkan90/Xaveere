@@ -1,4 +1,7 @@
-<?php 
+<?php
+
+
+namespace Xaveere\Libraries;
 
 /**
  * 

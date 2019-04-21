@@ -1,5 +1,8 @@
-<?php 
+<?php
 
+namespace Xaveere\Libraries;
+
+use Xaveere\Libraries\Session;
 /**
  * 
  */

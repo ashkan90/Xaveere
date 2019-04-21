@@ -6,7 +6,7 @@
 $database = [
 	"CONNECTION_TYPE" => "mysql",
 	"HOST" => "localhost",
-	"DATABASE" => "mvc",
+	"DATABASE" => "mysql",
 	"USERNAME" => "root",
 	"PASSWORD" => ""
 ];

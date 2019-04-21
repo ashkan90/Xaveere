@@ -1,5 +1,6 @@
 <?php 
 
+namespace Xaveere\Libraries;
 
 trait Validation {
 	public $errors = [];
