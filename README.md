@@ -1,6 +1,6 @@
 # Xaveere
 <p align="center">
-  <img src="https://github.com/ashkan90/Xaveere/blob/master/ADWdl7.png?raw=true" alt="Xaveere Micro Web Framework"/>
+  <img style="width: 100px; height: 100px;" src="https://github.com/ashkan90/Xaveere/blob/master/ADWdl7.png?raw=true" alt="Xaveere Micro Web Framework"/>
 </p>
 
 
