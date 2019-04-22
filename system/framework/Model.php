@@ -7,6 +7,7 @@ namespace Xaveere\framework;
 
 use Xaveere\framework\Connectors\Connector;
 use Xaveere\framework\Database\DatabaseResolver;
+use Xaveere\framework\Query\Collection;
 
 
 abstract class Model extends Connector
@@ -23,10 +24,12 @@ abstract class Model extends Connector
     {
         self::boot();
         $this->table = self::ResolveTable();
+
     }
 
     public static function all()
     {
+
         return static::query()
             ->select(["*"])
             ->get();
@@ -45,7 +48,12 @@ abstract class Model extends Connector
 
     public function newQuery()
     {
-        $this->registerQueryBoot();
+        return DatabaseResolver::registerQueryBoot($this->table);
+    }
+
+    public function newCollection($models)
+    {
+        return new Collection();
     }
 
 

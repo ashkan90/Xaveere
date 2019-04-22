@@ -58,26 +58,45 @@ trait DatabaseResolver
      */
     public static function ResolveTable()
     {
+        $table_name = null;
         // explode ile yürütülen işlem daha sonra
         // Kendi string, array sınıfımda tanıtılacak ve oradan kullanılacak.
 
-        $called_model = get_called_class();
+        $called_model_string = get_called_class();
 
-        $called_model = explode("\\", $called_model); // App/Models/{ModelName};
-        $called_model[2] = strtolower($called_model[2]); // Burada tablo ismini küçük tutmalıyız. ne geleceğeni bilemeyiz.
+        $called_model_array = explode("\\", $called_model_string); // App/Models/{ModelName};
+        $table_name = strtolower($called_model_array[2]); // Burada tablo ismini küçük tutmalıyız. ne geleceğeni bilemeyiz.
 
+        // Helpera taşınacak
+        if (strpos($table_name, '_') !== false) {
+            $called_model_array = explode('_', $table_name);
+        }
 
-        return $called_model[2];
+        if (preg_match_all('/((?:^|[A-Z])[a-z]+)/', $table_name)) {
+            $called_model_array = preg_split('/(?=[A-Z])/', $table_name);
+        }
+
+        self::lowerRecursively($called_model_array, $table_name);
+
+        return $table_name;
+    }
+
+    private static function lowerRecursively(array &$par, string &$to)
+    {
+        $response = implode("_", $par);
+        $par = null;
+        return $response;
     }
 
 
     /**
      * Query Builder kalıtımı yapılıp Model'e aktarılıyor.
+     * @param string $table
      * @return QueryBuilder
      */
-    public static function registerQueryBoot()
+    public static function registerQueryBoot($table)
     {
-        return self::registerQueryGlobalScopes(new MySqlQueryBuilder);
+        return self::registerQueryGlobalScopes(new MySqlQueryBuilder($table));
     }
 
     /**

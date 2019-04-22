@@ -13,27 +13,31 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
 
     protected $table;
 
-    public function __construct()
+    public function __construct($table)
     {
-        $this->database = parent::make();
-        return $this->database;
+        $this->table = $table;
+        return $this->database = parent::make();
     }
 
 
+    /**
+     * Oluşturulacak yeni sorgunun obje tipinde olmasını sağlıyoruz.
+     */
     protected function reset(): void
     {
         $this->query = new \stdClass;
     }
 
     /**
-     * @param string $table
+     * Select sorgusunu çalıştıracak mekanizma.
      * @param array $fields
      * @return QueryBuilder
      */
-    public function select(array $fields = []): QueryBuilder
+    public function select(array $fields = ["*"]): QueryBuilder
     {
         $this->reset();
-        $this->query->base = "SELECT " . implode(", ", $fields) . " FROM " . $this->table;
+
+        $this->query->base = "SELECT " . implode(", ", $fields) . " FROM $this->table";
         $this->query->type = 'select';
 
         return $this;
@@ -48,9 +52,14 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
      */
     public function where(string $field, string $value, string $operator = '='): QueryBuilder
     {
-        if (!in_array($this->query->type, ['select', 'update'])) {
-            throw new \Exception("WHERE can only be added to SELECT OR UPDATE");
+        // checkForType($type) //
+        if(!$this->query)
+            $this->select();
+        else if (!in_array($this->query->type, ['update'])) {
+            throw new \Exception("WHERE can only be added to UPDATE");
         }
+
+
         $this->query->where[] = "$field $operator '$value'";
 
         return $this;
@@ -73,6 +82,11 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
         return $this;
     }
 
+    public function first()
+    {
+        return $this->database->query($this->getSQL())->fetch(PDO::FETCH_OBJ);
+    }
+
     public function columnNames() : QueryBuilder
     {
         $this->reset();
@@ -87,6 +101,8 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
     {
         $query = $this->query;
         $sql = $query->base;
+
+
         if (!empty($query->where)) {
             $sql .= " WHERE " . implode(' AND ', $query->where);
         }
@@ -104,12 +120,7 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
 
     public function setTable(string $table): string
     {
-        $this->table = $table;
-    }
-
-    public function first()
-    {
-        return $this->database->query($this->getSQL())->fetch(PDO::FETCH_OBJ);
+        return $this->table = $table;
     }
 
     public function toArray()
