@@ -66,25 +66,6 @@ trait Session
 		return NULL;
 	}
 
-	public function has()
-	{
-		# code...
-	}
-
-	public function exists()
-	{
-		# code...
-	}
-
-	public function all($value='')
-	{
-		# code...
-	}
-
-	public function put($value='')
-	{
-		# code...
-	}
 
 	public function forget($session_name)
 	{

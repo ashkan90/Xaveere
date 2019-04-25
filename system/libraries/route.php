@@ -4,6 +4,8 @@
 namespace Xaveere\Libraries;
 
 
+use Xaveere\framework\Http\Input\InputInteracts;
+
 /**
  * @Framework Name: Xaveere
  * @Author Name: Emirhan Ataman
@@ -15,7 +17,7 @@ namespace Xaveere\Libraries;
 
 class Route
 {
-	
+	use InputInteracts;
 	private $controller = default_controller;
 	private $method = default_method;
 	private $param = default_param;

@@ -94,7 +94,7 @@ trait DatabaseResolver
      * @param string $table
      * @return QueryBuilder
      */
-    public static function registerQueryBoot($table)
+    public static function registerQueryBoot($table = "")
     {
         return self::registerQueryGlobalScopes(new MySqlQueryBuilder($table));
     }
