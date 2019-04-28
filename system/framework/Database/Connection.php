@@ -6,73 +6,35 @@ namespace Xaveere\framework\Database;
 
 use PDO;
 
-class Connection implements ConnectionBuilder
+class Connection
 {
+    protected static $instance;
 
-    protected $host;
+    protected $results;
 
-    protected $port;
+    protected $dsn;
 
-    protected $username;
+    public $pdo;
 
-    protected $password;
+    public $query;
 
-    protected $database;
+    public $table;
 
-    protected $pdo;
 
-    private $options = [
-        PDO::ATTR_CASE => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-        PDO::ATTR_STRINGIFY_FETCHES => false,
-        PDO::ATTR_EMULATE_PREPARES => false,
-
-    ];
-
-    public function host(string $host): ConnectionBuilder
+    public static function instance()
     {
-        $this->host = $host;
-        return $this;
+        if (is_null(self::$instance))
+            self::$instance = new Connection();
+
+        return self::$instance;
     }
 
-    public function port(string $port): ConnectionBuilder
+    public function __construct()
     {
-        $this->port = $port;
-        return $this;
-    }
-
-    public function username(string $username): ConnectionBuilder
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    public function password(string $password): ConnectionBuilder
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function database(string $database): \PDO
-    {
-        $this->database = $database;
-
-        $db_connection_string = "mysql:host={$this->host};dbname={$this->database};";
-
-
-        try {
-            $this->pdo = new \PDO(
-                $db_connection_string,
-                $this->username,
-                $this->password);
-            return $this->pdo;
-        } catch (\Exception $e)
-        {
-            die("Database connection error: {$e->getMessage()}");
-        }
+        $this->dsn = "mysql:host=localhost;dbname=mysql;";
+        $this->pdo = new PDO($this->dsn, 'root', '');
+        if ($this->pdo->errorCode())
+            throw new \PDOException($this->pdo->errorCode() . " " . $this->pdo->errorInfo());
 
     }
 }

@@ -8,8 +8,7 @@
   ],
   "require" : {
     "php" : "^7.0",
-    "ext-mbstring": "*",
-    "ext-http": "*"
+    "ext-mbstring": "*"
   },
   "autoload": {
     "psr-4": {

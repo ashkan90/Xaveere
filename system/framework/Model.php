@@ -14,22 +14,13 @@ abstract class Model extends Connector
 {
     use DatabaseResolver;
 
-    protected $connection;
-    protected $query;
-
-    protected $table;
-
-
     public function __construct()
     {
         self::boot();
-        $this->table = self::ResolveTable();
-
     }
 
     public static function all()
     {
-
         return static::query()
             ->select(["*"])
             ->get();
@@ -39,6 +30,24 @@ abstract class Model extends Connector
     {
         return static::query()
             ->select($columns);
+    }
+
+    public static function create($fields)
+    {
+        return static::query()
+            ->insert($fields);
+    }
+
+    public static function count()
+    {
+        return static::query()
+            ->count();
+    }
+
+    public static function destroy($field, $value)
+    {
+        return static::query()
+            ->delete($field, $value);
     }
 
     public static function query()
@@ -60,6 +69,11 @@ abstract class Model extends Connector
     public static function __callStatic($method, $arguments)
     {
         return self::query()->$method(...$arguments);
+    }
+
+    public function __get($name)
+    {
+
     }
 
 

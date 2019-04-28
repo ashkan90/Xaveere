@@ -3,10 +3,10 @@
 
 namespace Xaveere\framework\Connectors;
 
-use Xaveere\framework\Database\ConnectionBuilder as IConnectionBuilder;
+use Xaveere\framework\Database\Connection;
 
 
 interface IConnector
 {
-    public function connect(IConnectionBuilder $builder);
+    public function connect(Connection $builder);
 }

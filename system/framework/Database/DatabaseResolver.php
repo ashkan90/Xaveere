@@ -14,7 +14,9 @@ trait DatabaseResolver
      * Sınıfın kalıtımını yapacak yer.
      * @var DatabaseResolver|null
      */
-    protected static $instance = NULL;
+    private static $instance;
+
+    protected $table;
 
     /**
      * Çağırılan sınıfın kalıtımını alıyor, (Model) sınıfı
@@ -25,7 +27,7 @@ trait DatabaseResolver
         if (is_null(self::$instance))
         {
             $class = get_called_class();
-            return self::$instance = new $class;
+            self::$instance = new $class;
         }
 
         return self::$instance = $this;
@@ -35,10 +37,9 @@ trait DatabaseResolver
     /**
      * Topluluğu bootstrap yapmak için kullanılacak.
      */
-    public static function boot()
+    public function boot()
     {
-        self::ResolveTable();
-
+        return $this->table ?? $this->table = self::ResolveTable();
     }
 
     /**
