@@ -9,8 +9,17 @@ interface QueryBuilder
 
     public function where(string $field, string $value, string $operator = '='): QueryBuilder;
 
-    public function limit(int $start, int $offset): QueryBuilder;
-    public function columnNames() : QueryBuilder;
+    public function limit(int $start, int $offset = null): QueryBuilder;
+
+    public function columnNames() ;
+
+    public function insert(array $fields);
+
+    public function delete(string $field = null, $value = null) : QueryBuilder;
+
+    function exec();
+
+    public function count();
 
     // +100 other SQL syntax methods...
 
@@ -18,7 +27,6 @@ interface QueryBuilder
     public function toArray();
     public function first();
     public function getSQL(): string;
-    public function getTable() : string;
-    public function setTable(string $table): string;
+
 
 }

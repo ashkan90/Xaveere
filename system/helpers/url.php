@@ -1,5 +1,13 @@
 <?php 
 
+function dd(...$data)
+{
+    echo "<pre>";
+        print_r($data);
+    echo "</pre>";
+    die();
+}
+
 
 function _public($path){
 	if (!empty($path)) {

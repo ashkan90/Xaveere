@@ -1,23 +1,18 @@
 <?php
 
 
-use App\Models\Question;
-use App\Models\User;
+use App\models\Help_Category;
 use Xaveere\Libraries\Xaveere;
 
 class Welcome extends Xaveere
 {
+
+
+
 	public function index()
 	{
 
-
-
-        $data = new User();
-        $data2 = new Question();
-
-        die(print_r($data2));
-
-
+        dd(Help_Category::where('name', 'Geographic')->get());
 
 		$this->view("app");
 	}

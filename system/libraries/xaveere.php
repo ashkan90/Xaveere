@@ -2,13 +2,15 @@
 
 namespace Xaveere\Libraries;
 
+use Xaveere\framework\Http\Input\InputInteracts;
+
 /**
  * 
  */
 class Xaveere
 {
 
-	use Validation, File, Session;
+	use Validation, File, Session, InputInteracts;
 	public function __construct()
 	{
 		if (file_exists("../application/config/autoload.php")) {

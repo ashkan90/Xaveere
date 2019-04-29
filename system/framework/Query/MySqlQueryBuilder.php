@@ -3,43 +3,91 @@
 
 namespace Xaveere\framework\Query;
 
-use \PDO;
-use Xaveere\framework\Connectors\Connector;
 
-class MySqlQueryBuilder extends Connector implements QueryBuilder
+use PDO;
+use Xaveere\framework\Helpers\Arr;
+use Xaveere\framework\Helpers\Str;
+
+class MySqlQueryBuilder implements QueryBuilder
 {
+    use ConnectionManager;
 
-    protected $query;
+    /**
+     * Query types
+     */
+    private const TYPES = array(
+        's' => 'select',
+        'u' => 'update',
+        'd' => 'delete',
+        'i' => 'insert',
+        'w' => 'where'
+    );
 
-    protected $table;
+    private $PDO_TYPES = array(
+        'obj' => PDO::FETCH_OBJ,
+        'col' => PDO::FETCH_COLUMN,
+        'aso' => PDO::FETCH_ASSOC,
+    );
 
-    public function __construct()
-    {
-        $this->database = parent::make();
-        return $this->database;
-    }
-
-
+    /**
+     * Oluşturulacak yeni sorgunun obje tipinde olmasını sağlıyoruz.
+     */
     protected function reset(): void
     {
-        $this->query = new \stdClass;
+        $this->query = (object) null;
     }
 
     /**
-     * @param string $table
+     * Select sorgusunu çalıştıracak mekanizma.
      * @param array $fields
      * @return QueryBuilder
      */
-    public function select(array $fields = []): QueryBuilder
+    public function select(array $fields = ["*"]): QueryBuilder
     {
         $this->reset();
-        $this->query->base = "SELECT " . implode(", ", $fields) . " FROM " . $this->table;
+
+        $this->query->base = "SELECT " . implode(", ", $fields) . " FROM $this->table";
         $this->query->type = 'select';
 
         return $this;
     }
 
     /**
+     * Starting insert clause
+     *
+     * @param array $fields_values
+     * @return mixed
+     * @throws \Exception
+     */
+    public function insert(array $fields_values)
+    {
+
+        if (!$this->query) {
+            $this->reset();
+        } else if (!in_array(
+             $this->query->type, Arr::only(self::TYPES, 'i')
+        )) {
+            throw new \Exception("INSERT statement cannot be used with other STATEMENTS.");
+        }
+
+        if (is_array($fields_values)) {
+            $fields = Arr::keysWithDelimiterAsString($fields_values, ',');
+            $values = array_map(function($val) {
+                return Str::escape($val);
+            }, Arr::values($fields_values));
+
+            $question_marks = Arr::addDelimiterViaArray($fields_values, ',');
+
+            $this->query->base = "INSERT INTO {$this->table} ({$fields}) VALUES ({$question_marks})";
+            $this->query->parameters = $values;
+        }
+
+        return $this->get();
+    }
+
+    /**
+     * Using where clause.
+     *
      * @param string $field
      * @param string $value
      * @param string $operator
@@ -48,38 +96,121 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
      */
     public function where(string $field, string $value, string $operator = '='): QueryBuilder
     {
-        if (!in_array($this->query->type, ['select', 'update'])) {
-            throw new \Exception("WHERE can only be added to SELECT OR UPDATE");
+
+        if(!$this->query) {
+            $this->select();
         }
+        else if (! in_array(
+            $this->query->type, Arr::only(self::TYPES, 'i'))) {
+            throw new \Exception("You cannot use WHERE statement while using INSERT statement.", 302);
+        }
+
+        if (! in_array($field, $this->columnNames()) ) {
+            throw new \Exception("There is no column called '{$field}' in '{$this->table}'");
+        }
+
+
         $this->query->where[] = "$field $operator '$value'";
+        $this->query->type = 'where';
+        $this->query->identifier = 'w';
+        $this->query->parameters[] = $value;
+
+        return $this;
+    }
+
+    public function delete(string $field = null, $value = null): QueryBuilder
+    {
+        if(! $this->query) {
+            $this->reset();
+        }
+        else if(! in_array($this->query->type, Arr::only(self::TYPES, ['d', 'w']))) {
+            throw new \Exception("DELETE statement can be used only with WHERE");
+        }
+
+        $this->query->base = "DELETE FROM {$this->table}";
+        $this->query->type = 'delete';
+
+        is_null($field) ?: $this->where($field, $value);
+
+        $this->query->identifier = 'd';
 
         return $this;
     }
 
     /**
+     * Using limit clause.
+     *
      * @param int $start
      * @param int $offset
      * @return QueryBuilder
      * @throws \Exception
      */
-    public function limit(int $start, int $offset): QueryBuilder
+    public function limit(int $start, int $offset = null): QueryBuilder
     {
-        if (!in_array($this->query->type, ['select'])) {
+        if (! $this->query) {
+            $this->select();
+        }
+        else if (!in_array(
+            $this->query->type, Arr::only(self::TYPES, 's'))) {
             throw new \Exception("LIMIT can only be added to SELECT");
         }
-        $this->query->limit = " LIMIT " . $start . ", " . $offset;
-        $this->database->prepare($this->query->limit);
+        (!is_null($offset))
+                ? $this->query->limit = " LIMIT " . $start . ", " . $offset
+                : $this->query->limit = " LIMIT " . $start;
 
         return $this;
     }
 
-    public function columnNames() : QueryBuilder
+    /**
+     * Returns all column names
+     *
+     * @return array
+     */
+    public function columnNames()
     {
-        $this->reset();
-        $this->query->base = "SHOW COLUMNS FROM {$this->table}";
+        $cols = $this->pdo->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
 
-        return $this;
+        return (array) $cols;
     }
+
+    /**
+     * Get fetch result as array
+     *
+     * @return mixed
+     */
+    public function toArray()
+    {
+        return $this->exec()->fetchAll();
+    }
+
+    /**
+     * Get first result for given query
+     *
+     * @return mixed
+     */
+    public function first()
+    {
+        return $this
+            ->exec(true)
+            ->fetch($this->PDO_TYPES['obj']);
+    }
+
+    /**
+     * Prepare and execute query
+     *
+     * @param $logic
+     * @return mixed
+     */
+    function exec()
+    {
+         $sth = $this->pdo->prepare($this->getSQL());
+
+         $sth->execute(
+                $this->query->parameters ?? array()
+            );
+         return $sth;
+    }
+
     /**
      * Get the final query string.
      */
@@ -87,39 +218,52 @@ class MySqlQueryBuilder extends Connector implements QueryBuilder
     {
         $query = $this->query;
         $sql = $query->base;
-        if (!empty($query->where)) {
+
+        if (! empty($query->where)) {
             $sql .= " WHERE " . implode(' AND ', $query->where);
         }
         if (isset($query->limit)) {
             $sql .= $query->limit;
         }
+
         $sql .= ";";
         return $sql;
     }
 
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
-    public function setTable(string $table): string
-    {
-        $this->table = $table;
-    }
-
-    public function first()
-    {
-        return $this->database->query($this->getSQL())->fetch(PDO::FETCH_OBJ);
-    }
-
-    public function toArray()
-    {
-        return $this->database->query($this->getSQL())->fetchAll();
-    }
-
+    /**
+     * Get all results from specific table for given query
+     *
+     * @return mixed
+     */
     public function get()
     {
-        return $this->database->query($this->getSQL())->fetchAll(PDO::FETCH_OBJ);
+
+        return $this
+            ->exec()
+            ->fetchAll($this->PDO_TYPES['obj']);
+    }
+
+    /**
+     * Get row count of specific table
+     * @return mixed
+     */
+    public function count()
+    {
+        $this->reset();
+
+        $this->query->base = "SELECT COUNT(*) FROM {$this->table}";
+        $this->query->type = 'select';
+
+        return $this->exec()->fetchColumn();
+    }
+
+    /**
+     * Builds Model instance for given table name.
+     * @param $table
+     */
+    public function __construct($table)
+    {
+        $this->resolveFields($table);
     }
 
 }
