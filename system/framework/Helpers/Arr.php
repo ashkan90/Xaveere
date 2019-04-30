@@ -18,12 +18,22 @@ class Arr
         return $array;
     }
 
-    public static function only($array, $keys)
+    final public static function first($array)
+    {
+        return $array[0];
+    }
+
+    final public static function firstKey($array)
+    {
+        return array_key_first($array);
+    }
+
+    final public static function only($array, $keys)
     {
         return array_intersect_key($array, array_flip((array) $keys));
     }
 
-    public static function exists($array, $key)
+    final public static function exists($array, $key)
     {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
@@ -31,18 +41,48 @@ class Arr
         return array_key_exists($key, $array);
     }
 
-    public static function keys($array)
+    final public static function keys($array)
     {
         return array_keys($array);
     }
 
+    final public static function find_and_replace($array, $search, $replacement)
+    {
+        return array_replace($array,
+            array_fill_keys(
+                array_keys($array, $search),
+                $replacement
+            )
+        );
+    }
+
+    final public static function find_and_replace_recursive($array, $search, $replacement)
+    {
+        return array_replace_recursive($array,
+            array_fill_keys(
+                array_keys($array, $search),
+                $replacement
+            )
+        );
+    }
+
+
+    final public static function last($array)
+    {
+        return $array[count($array) - 1];
+    }
+
+    final public static function lastKey($array)
+    {
+        return array_key_last($array);
+    }
     // GİDECEK
     public static function keysWithDelimiterAsString($array, $delimiter)
     {
         return implode($delimiter, self::keys($array));
     }
 
-    public static function values($array)
+    final public static function values($array)
     {
         return array_values($array);
     }
@@ -54,7 +94,7 @@ class Arr
         return implode($delimiter, self::values($array));
     }
 
-    public static function count($array)
+    final public static function count($array)
     {
         return count($array);
     }
