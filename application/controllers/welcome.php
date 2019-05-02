@@ -12,10 +12,7 @@ class Welcome extends Xaveere
 	public function index()
 	{
 
-
-
-
-        dd(Help_Category::where('name', 'Geographic')->get());
+        dd(Help_Category::destroy('name', 'Emirhan')->get());
 
 		$this->view("app");
 	}

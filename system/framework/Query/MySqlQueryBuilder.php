@@ -7,6 +7,8 @@ namespace Xaveere\framework\Query;
 use PDO;
 use Xaveere\framework\Helpers\Arr;
 use Xaveere\framework\Helpers\Str;
+use Xaveere\framework\Query\Grammars\Grammar;
+use Xaveere\framework\Query\Grammars\Langs\MySqlGrammar;
 
 class MySqlQueryBuilder implements QueryBuilder
 {
@@ -44,12 +46,14 @@ class MySqlQueryBuilder implements QueryBuilder
      */
     public function select(array $fields = ["*"]): QueryBuilder
     {
-        $this->reset();
+        Grammar::selectGrammar($fields);
+        return $this;
+        /*$this->reset();
 
         $this->query->base = "SELECT " . implode(", ", $fields) . " FROM $this->table";
         $this->query->type = 'select';
 
-        return $this;
+        return $this;*/
     }
 
     /**
@@ -97,7 +101,9 @@ class MySqlQueryBuilder implements QueryBuilder
     public function where(string $field, string $value, string $operator = '='): QueryBuilder
     {
 
-        if(!$this->query) {
+
+        Grammar::whereGrammar($field, $value, $operator);
+        /*if(!$this->query) {
             $this->select();
         }
         else if (! in_array(
@@ -113,14 +119,18 @@ class MySqlQueryBuilder implements QueryBuilder
         $this->query->where[] = "$field $operator '$value'";
         $this->query->type = 'where';
         $this->query->identifier = 'w';
-        $this->query->parameters[] = $value;
+        $this->query->parameters[] = $value;*/
 
         return $this;
     }
 
     public function delete(string $field = null, $value = null): QueryBuilder
     {
-        if(! $this->query) {
+
+        Grammar::deleteGrammar($field, $value);
+
+        return $this;
+        /*if(! $this->query) {
             $this->reset();
         }
         else if(! in_array($this->query->type, Arr::only(self::TYPES, ['d', 'w']))) {
@@ -134,7 +144,7 @@ class MySqlQueryBuilder implements QueryBuilder
 
         $this->query->identifier = 'd';
 
-        return $this;
+        return $this;*/
     }
 
     /**
@@ -168,9 +178,8 @@ class MySqlQueryBuilder implements QueryBuilder
      */
     public function columnNames()
     {
-        $cols = $this->pdo->query("DESCRIBE {$this->table}")->fetchAll(PDO::FETCH_COLUMN);
 
-        return (array) $cols;
+        dd(Grammar::columnGrammar());
     }
 
     /**
@@ -203,12 +212,12 @@ class MySqlQueryBuilder implements QueryBuilder
      */
     function exec()
     {
-         $sth = $this->pdo->prepare($this->getSQL());
+        $this->prepared = $this->pdo->prepare($this->getSQL());
 
-         $sth->execute(
+        $this->prepared->execute(
                 $this->query->parameters ?? array()
             );
-         return $sth;
+         return $this->prepared;
     }
 
     /**
@@ -238,9 +247,15 @@ class MySqlQueryBuilder implements QueryBuilder
     public function get()
     {
 
-        return $this
+        $grammar = Grammar::get();
+        $query = $grammar->query;
+        $parameters = $grammar->parameters;
+        dd($query, $parameters);
+        return ;
+
+        /*return $this
             ->exec()
-            ->fetchAll($this->PDO_TYPES['obj']);
+            ->fetchAll($this->PDO_TYPES['obj']);*/
     }
 
     /**
@@ -263,7 +278,16 @@ class MySqlQueryBuilder implements QueryBuilder
      */
     public function __construct($table)
     {
+
         $this->resolveFields($table);
+
+
+        Grammar::boot(
+            $this->pdo,
+            $table,
+            $this->query,
+            $this->prepared
+        );
     }
 
 }

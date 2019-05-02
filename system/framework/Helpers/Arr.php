@@ -30,7 +30,9 @@ class Arr
 
     final public static function only($array, $keys)
     {
-        return array_intersect_key($array, array_flip((array) $keys));
+        return (is_array($array))
+            ? array_intersect_key($array, array_flip((array) $keys))
+            : array_intersect_key( (array) $array, array_flip((array) $keys));
     }
 
     final public static function exists($array, $key)
@@ -46,16 +48,6 @@ class Arr
         return array_keys($array);
     }
 
-    final public static function find_and_replace($array, $search, $replacement)
-    {
-        return array_replace($array,
-            array_fill_keys(
-                array_keys($array, $search),
-                $replacement
-            )
-        );
-    }
-
     final public static function find_and_replace_recursive($array, $search, $replacement)
     {
         return array_replace_recursive($array,
@@ -64,6 +56,17 @@ class Arr
                 $replacement
             )
         );
+    }
+
+    final public static function test($object)
+    {
+        $not_empty_objects = array();
+        foreach ($object as $key => $item) {
+            if (!empty((array) $item))
+                $not_empty_objects[$key] = $item;
+        }
+
+        return (object) $not_empty_objects;
     }
 
 
@@ -100,13 +103,27 @@ class Arr
     }
 
     // GİDECEK
-    public static function addDelimiterViaArray($array, $delimiter)
+    public static function addDelimiterViaArray($array, $glue)
     {
-        return implode($delimiter, array_fill(0, sizeof($array), '?'));
+        return implode($glue, array_fill(0, sizeof($array), '?'));
     }
 
 
+    /**
+     * İSİM DÜŞÜNÜLECEK. VE BU CLASS DAN GİDECEK.
+     * @param $keys
+     * @param $glue
+     * @return array
+     */
+    final public static function useGlueForKeys($keys, $glue)
+    {
+        $new_keys = [];
+        foreach ($keys as $key) {
+            $new_keys[] = $key . $glue;
+        }
 
+        return $new_keys;
+    }
 
     public static function forget(&$array, $keys)
     {

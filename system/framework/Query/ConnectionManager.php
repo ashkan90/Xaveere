@@ -15,6 +15,8 @@ trait ConnectionManager
 
     protected $pdo;
 
+    protected $prepared;
+
     public function resolveFields($table)
     {
         $instance = Connector::make();
@@ -22,6 +24,17 @@ trait ConnectionManager
         $this->table = $table;
         $this->query = $instance->query;
         $this->pdo = $instance->pdo;
+    }
+
+    public function fetchMode($mode)
+    {
+        return $this->prepared->setFetchMode($mode);
+    }
+
+    public function __call($method, $arguments)
+    {
+        if (function_exists($method))
+            return $this->$method;
     }
 
 

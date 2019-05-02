@@ -23,6 +23,8 @@ class Connection
 
     public static function instance()
     {
+        // HATA ÇIKABİLİR.
+        self::$instance = null;
         if (is_null(self::$instance))
             self::$instance = new Connection();
 
@@ -31,10 +33,20 @@ class Connection
 
     public function __construct()
     {
-        $this->dsn = "mysql:host=localhost;dbname=mysql;";
-        $this->pdo = new PDO($this->dsn, 'root', '');
-        if ($this->pdo->errorCode())
-            throw new \PDOException($this->pdo->errorCode() . " " . $this->pdo->errorInfo());
 
+        if (is_null($this->pdo)) {
+
+            $this->dsn = "mysql:host=localhost;dbname=mysql;";
+            $this->pdo = new PDO($this->dsn, 'root', '');
+
+            if ($this->pdo->errorCode())
+                throw new \PDOException($this->pdo->errorCode() . " " . $this->pdo->errorInfo());
+        }
+
+    }
+
+    public function __destruct()
+    {
+        unset($this->pdo);
     }
 }

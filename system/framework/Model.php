@@ -44,7 +44,7 @@ abstract class Model extends Connector
             ->count();
     }
 
-    public static function destroy($field, $value)
+    public static function destroy($field = null, $value = null)
     {
         return static::query()
             ->delete($field, $value);
